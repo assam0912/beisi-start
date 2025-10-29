@@ -2,10 +2,10 @@ package org.example.interceptors;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.example.stores.TokenStore;
 import org.example.utils.JwtUtil;
 import org.example.utils.ThreadLocalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -14,7 +14,7 @@ import java.util.Map;
 @Component
 public class LoginInteceptor implements HandlerInterceptor {
     @Autowired
-    private StringRedisTemplate stringRedisTemplate;
+    private TokenStore tokenStore;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -22,9 +22,9 @@ public class LoginInteceptor implements HandlerInterceptor {
         String token = request.getHeader("Authorization");
         // 验证token
         try {
-            // 从redis里取出相同的token
-            String redisToken = stringRedisTemplate.opsForValue().get(token);
-            if (redisToken == null) {
+            // 从currentHashMap里取出相同的token
+            String localToken = tokenStore.getToken(token);
+            if (localToken == null) {
                 throw new RuntimeException();
             }
             Map<String, Object> claims = JwtUtil.parseToken(token);

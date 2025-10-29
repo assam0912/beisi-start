@@ -4,9 +4,9 @@ import org.example.pojo.Result;
 import org.example.pojo.Token;
 import org.example.pojo.User;
 import org.example.service.IUserService;
+import org.example.stores.TokenStore;
 import org.example.utils.JwtUtil;
 import org.example.utils.ThreadLocalUtil;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -16,10 +16,10 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class UserServiceImpl implements IUserService {
 
-    private final StringRedisTemplate stringRedisTemplate;
+    private final TokenStore tokenStore;
 
-    public UserServiceImpl(StringRedisTemplate stringRedisTemplate) {
-        this.stringRedisTemplate = stringRedisTemplate;
+    public UserServiceImpl(TokenStore tokenStore) {
+        this.tokenStore = tokenStore;
     }
 
     // 登录
@@ -31,8 +31,8 @@ public class UserServiceImpl implements IUserService {
             HashMap<String, Object> claims = new HashMap<>();
             claims.put("username", user.getUsername());
             String token = JwtUtil.genToken(claims);
-            // 把token存储到redis中
-            stringRedisTemplate.opsForValue().set(token, token, 1, TimeUnit.HOURS);
+            // 把token存储到currentHashMap中
+            tokenStore.saveToken(token);
             return Result.success("Login successful", new Token(token));
         }
         return Result.error("Invalid username or password");
