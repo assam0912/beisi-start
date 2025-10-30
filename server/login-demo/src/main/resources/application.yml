@@ -1,10 +1,2 @@
 server:
   port: ${PORT:8080}
-spring:
-  graphql:
-    cors:
-      allowed-methods: *
-      allowed-origins: *
-      allowed-headers: *
-      allow-credentials: true
-      max-age: 3600
