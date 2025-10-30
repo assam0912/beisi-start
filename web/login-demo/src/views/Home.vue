@@ -38,7 +38,7 @@ const router = useRouter();
 import { ElMessage } from 'element-plus'
 // 退出登录
 const logout = async () => {
-    // 清楚pinia中存储的token和userInfo
+    // 清除pinia中存储的token和userInfo
     tokenStore.removeToken();
     userInfoStore.removeInfo();
 

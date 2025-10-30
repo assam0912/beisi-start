@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { ElMessage } from 'element-plus'
 
-const baseURL = '/api';
+// 根据环境决定baseURL：开发时走/api（vite代理），生产时走VITE_APP_API_URL（构建时注入）
+const baseURL = import.meta.env.DEV ? '/api' : (import.meta.env.VITE_APP_API_URL + '/api');
 const instance = axios.create({ baseURL })
 
 import { useTokenStore } from '@/stores/token';
